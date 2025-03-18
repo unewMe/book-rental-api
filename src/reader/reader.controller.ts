@@ -1,9 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Get, Put, Delete, Param, Body } from '@nestjs/common';
 import { ReaderService } from './reader.service';
 import { CreateReaderDto } from './dto/create-reader.dto';
 import { UpdateReaderDto } from './dto/update-reader.dto';
 
-@Controller('reader')
+@Controller('readers')
 export class ReaderController {
   constructor(private readonly readerService: ReaderService) {}
 
@@ -19,16 +19,21 @@ export class ReaderController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.readerService.findOne(+id);
+    return this.readerService.findOne(id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   update(@Param('id') id: string, @Body() updateReaderDto: UpdateReaderDto) {
-    return this.readerService.update(+id, updateReaderDto);
+    return this.readerService.update(id, updateReaderDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.readerService.remove(+id);
+    return this.readerService.remove(id);
+  }
+
+  @Get(':id/rented-books')
+  getRentedBooks(@Param('id') id: string) {
+    return this.readerService.getRentedBooks(id);
   }
 }

@@ -1,26 +1,60 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateReaderDto } from './dto/create-reader.dto';
 import { UpdateReaderDto } from './dto/update-reader.dto';
+import { Reader } from './entities/reader.entity';
+import { Rental } from '../rental/entities/rental.entity';
+import { Book } from '../book/entities/book.entity';
+
 
 @Injectable()
 export class ReaderService {
-  create(createReaderDto: CreateReaderDto) {
-    return 'This action adds a new reader';
+  constructor(
+    @InjectRepository(Reader)
+    private readonly readerRepository: Repository<Reader>,
+    @InjectRepository(Rental)
+    private readonly rentalRepository: Repository<Rental>,
+  ) {}
+
+  async create(createReaderDto: CreateReaderDto): Promise<Reader> {
+    const reader = this.readerRepository.create(createReaderDto);
+    return await this.readerRepository.save(reader);
   }
 
-  findAll() {
-    return `This action returns all reader`;
+  async findAll(): Promise<Reader[]> {
+    return await this.readerRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} reader`;
+  async findOne(id: string): Promise<Reader> {
+    const reader = await this.readerRepository.findOne({ where: { id } });
+    if (!reader) {
+      throw new NotFoundException(`Reader with id ${id} not found`);
+    }
+    return reader;
   }
 
-  update(id: number, updateReaderDto: UpdateReaderDto) {
-    return `This action updates a #${id} reader`;
+  async update(id: string, updateReaderDto: UpdateReaderDto): Promise<Reader> {
+    const reader = await this.findOne(id);
+    Object.assign(reader, updateReaderDto);
+    return await this.readerRepository.save(reader);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} reader`;
+  async remove(id: string): Promise<void> {
+    const reader = await this.findOne(id);
+    await this.readerRepository.remove(reader);
+  }
+
+  async getRentedBooks(readerId: string): Promise<Book[]> {
+    const reader = await this.readerRepository.findOne({
+      where: { id: readerId },
+      relations: ['rentals', 'rentals.book'],
+    });
+    if (!reader) {
+      throw new NotFoundException(`Reader with id ${readerId} not found`);
+    }
+    return reader.rentals
+      .filter((rental) => rental.status === 'wypożyczona')
+      .map((rental) => rental.book);
   }
 }

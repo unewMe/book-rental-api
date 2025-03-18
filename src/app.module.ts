@@ -6,6 +6,7 @@ import { BookModule } from './book/book.module';
 import { ReaderModule } from './reader/reader.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { RentalModule } from './rental/rental.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     AuthorModule,
     BookModule,
     ReaderModule,
+    RentalModule,
   ],
   controllers: [AppController],
   providers: [AppService],
