@@ -37,11 +37,11 @@ export class Book {
   publicationYear?: number;
 
   @ApiProperty({
-    description: 'Number of available copies',
-    default: 1,
+    description: 'Indicates whether the book is currently rented',
+    default: false,
   })
-  @Column({ type: 'int', default: 1 })
-  copiesAvailable: number;
+  @Column({ default: false })
+  isRented: boolean;
 
   @ApiProperty({
     description: 'List of rental records for this book',

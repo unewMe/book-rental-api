@@ -21,14 +21,4 @@ export class CreateBookDto {
   @IsOptional()
   @IsInt()
   publicationYear?: number;
-
-  @ApiProperty({
-    description: 'Number of available copies',
-    default: 1,
-    required: false,
-  })
-  @IsOptional()
-  @IsInt()
-  @Min(1)
-  copiesAvailable?: number;
 }

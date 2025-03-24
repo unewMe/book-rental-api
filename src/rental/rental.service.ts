@@ -9,7 +9,6 @@ import { Rental } from './entities/rental.entity';
 import { Book } from '../book/entities/book.entity';
 import { Reader } from '../reader/entities/reader.entity';
 
-
 @Injectable()
 export class RentalService {
   constructor(
@@ -27,30 +26,20 @@ export class RentalService {
     rentalDate: Date,
     dueDate: Date,
   ): Promise<Rental> {
-    const book = await this.bookRepository.findOne({
-      where: { id: bookId },
-      relations: ['rentals'],
-    });
+    const book = await this.bookRepository.findOne({ where: { id: bookId } });
     if (!book) {
       throw new NotFoundException(`Book with id ${bookId} not found`);
     }
-    const reader = await this.readerRepository.findOne({
-      where: { id: readerId },
-    });
+
+    if (book.isRented) {
+      throw new BadRequestException(`Book with id ${bookId} is already rented`);
+    }
+
+    const reader = await this.readerRepository.findOne({ where: { id: readerId } });
     if (!reader) {
       throw new NotFoundException(`Reader with id ${readerId} not found`);
     }
-    const activeRentalsCount = await this.rentalRepository.count({
-      where: {
-        book: { id: bookId },
-        status: 'wypożyczona',
-      },
-    });
-    if (activeRentalsCount >= book.copiesAvailable) {
-      throw new BadRequestException(
-        `No available copies for book id ${bookId}`,
-      );
-    }
+
     const rental = this.rentalRepository.create({
       book,
       reader,
@@ -58,12 +47,18 @@ export class RentalService {
       dueDate,
       status: 'wypożyczona',
     });
-    return await this.rentalRepository.save(rental);
+    const savedRental = await this.rentalRepository.save(rental);
+
+    book.isRented = true;
+    await this.bookRepository.save(book);
+
+    return savedRental;
   }
 
   async returnBook(rentalId: string): Promise<Rental> {
     const rental = await this.rentalRepository.findOne({
       where: { id: rentalId },
+      relations: ['book'],
     });
     if (!rental) {
       throw new NotFoundException(`Rental with id ${rentalId} not found`);
@@ -73,9 +68,16 @@ export class RentalService {
         `Rental with id ${rentalId} is not currently rented`,
       );
     }
+
     rental.returnDate = new Date();
     rental.status = 'zwrócona';
-    return await this.rentalRepository.save(rental);
+    const updatedRental = await this.rentalRepository.save(rental);
+
+    const book = rental.book;
+    book.isRented = false;
+    await this.bookRepository.save(book);
+
+    return updatedRental;
   }
 
   async getRentalsByReader(readerId: string): Promise<Rental[]> {
