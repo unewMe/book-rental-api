@@ -15,7 +15,6 @@ export class RentalController {
     return this.rentalService.rentBook(
       createRentalDto.bookId,
       createRentalDto.readerId,
-      createRentalDto.rentalDate,
       createRentalDto.dueDate,
     );
   }
