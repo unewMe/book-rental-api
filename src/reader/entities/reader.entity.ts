@@ -24,6 +24,6 @@ export class Reader {
     description: 'List of rentals',
     type: () => [Rental],
   })
-  @OneToMany(() => Rental, (rental) => rental.reader)
+  @OneToMany(() => Rental, (rental) => rental.reader, {cascade: true})
   rentals: Rental[];
 }

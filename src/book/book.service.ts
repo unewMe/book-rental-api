@@ -48,17 +48,32 @@ export class BookService {
 
   async assignAuthor(bookId: string, authorId: string): Promise<Book> {
     const book = await this.findOne(bookId);
-    const author = await this.authorRepository.findOne({ where: { id: authorId } });
+    const author = await this.authorRepository.findOne({
+      where: { id: authorId },
+    });
     if (!author) {
       throw new NotFoundException(`Author with id ${authorId} not found`);
     }
     if (!book.authors) {
       book.authors = [];
     }
-    if (!book.authors.some(a => a.id === author.id)) {
+    if (!book.authors.some((a) => a.id === author.id)) {
       book.authors.push(author);
       await this.bookRepository.save(book);
     }
     return book;
   }
+
+  async removeAuthor(bookId: string, authorId: string): Promise<Book> {
+    const book = await this.findOne(bookId);
+    if (!book.authors || !book.authors.some((a) => a.id === authorId)) {
+      throw new NotFoundException(
+        `Author with id ${authorId} is not assigned to book ${bookId}`,
+      );
+    }
+    book.authors = book.authors.filter((author) => author.id !== authorId);
+    await this.bookRepository.save(book);
+    return book;
+  }
+
 }

@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Author } from './entities/author.entity';
 import { CreateAuthorDto } from './dto/create-author.dto';
 import { UpdateAuthorDto } from './dto/update-author.dto';
+import { Book } from 'src/book/entities/book.entity';
 
 @Injectable()
 export class AuthorService {
@@ -42,4 +43,10 @@ export class AuthorService {
     const author = await this.findOne(id);
     await this.authorRepository.remove(author);
   }
+
+  async getBooks(authorId: string): Promise<Book[]> {
+    const author = await this.findOne(authorId);
+    return author.books;
+  }
+
 }

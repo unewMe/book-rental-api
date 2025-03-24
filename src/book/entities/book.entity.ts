@@ -47,14 +47,14 @@ export class Book {
     description: 'List of rentals',
     type: () => [Rental],
   })
-  @OneToMany(() => Rental, (rental) => rental.book)
+  @OneToMany(() => Rental, (rental) => rental.book, {cascade: true})
   rentals: Rental[];
 
   @ApiProperty({
     description: 'List of authors',
     type: () => [Author],
   })
-  @ManyToMany(() => Author, (author) => author.books)
+  @ManyToMany(() => Author, (author) => author.books, {cascade: true})
   @JoinTable()
   authors: Author[];
 }
