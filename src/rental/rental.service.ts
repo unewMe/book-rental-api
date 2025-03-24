@@ -23,7 +23,6 @@ export class RentalService {
   async rentBook(
     bookId: string,
     readerId: string,
-    rentalDate: Date,
     dueDate: Date,
   ): Promise<Rental> {
     const book = await this.bookRepository.findOne({ where: { id: bookId } });
@@ -39,6 +38,8 @@ export class RentalService {
     if (!reader) {
       throw new NotFoundException(`Reader with id ${readerId} not found`);
     }
+
+    const rentalDate = new Date();
 
     const rental = this.rentalRepository.create({
       book,

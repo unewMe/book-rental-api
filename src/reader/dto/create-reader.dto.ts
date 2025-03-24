@@ -15,14 +15,4 @@ export class CreateReaderDto {
   @ApiProperty({ description: 'Reader email address' })
   @IsEmail()
   email: string;
-
-  @ApiProperty({ description: 'Reader phone number', required: false })
-  @IsOptional()
-  @IsString()
-  phone?: string;
-
-  @ApiProperty({ description: 'Reader address', required: false })
-  @IsOptional()
-  @IsString()
-  address?: string;
 }

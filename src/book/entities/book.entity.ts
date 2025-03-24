@@ -12,24 +12,24 @@ import { Rental } from '../../rental/entities/rental.entity';
 
 @Entity()
 export class Book {
-  @ApiProperty({ description: 'Unique identifier for the book' })
+  @ApiProperty({ description: 'Book unique identifier' })
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ApiProperty({ description: 'Title of the book' })
+  @ApiProperty({ description: 'Book title' })
   @Column()
   title: string;
 
-  @ApiProperty({ description: 'Detailed description of the book' })
+  @ApiProperty({ description: 'Book description' })
   @Column({ type: 'text' })
   description: string;
 
-  @ApiProperty({ description: 'ISBN of the book' })
+  @ApiProperty({ description: 'Book ISBN number' })
   @Column({ unique: true })
   isbn: string;
 
   @ApiProperty({
-    description: 'Year the book was published',
+    description: 'Book publication year',
     required: false,
     type: Number,
   })
@@ -37,21 +37,21 @@ export class Book {
   publicationYear?: number;
 
   @ApiProperty({
-    description: 'Indicates whether the book is currently rented',
+    description: 'Indicates if is currently rented',
     default: false,
   })
   @Column({ default: false })
   isRented: boolean;
 
   @ApiProperty({
-    description: 'List of rental records for this book',
+    description: 'List of rentals',
     type: () => [Rental],
   })
   @OneToMany(() => Rental, (rental) => rental.book)
   rentals: Rental[];
 
   @ApiProperty({
-    description: 'List of authors for this book',
+    description: 'List of authors',
     type: () => [Author],
   })
   @ManyToMany(() => Author, (author) => author.books)

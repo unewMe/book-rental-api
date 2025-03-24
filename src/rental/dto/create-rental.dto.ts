@@ -13,13 +13,6 @@ export class CreateRentalDto {
   readerId: string;
 
   @ApiProperty({
-    description: 'Rental start date in ISO format',
-    example: '2023-04-01T10:00:00Z',
-  })
-  @IsDateString()
-  rentalDate: Date;
-
-  @ApiProperty({
     description: 'Due date in ISO format',
     example: '2023-04-15T10:00:00Z',
   })

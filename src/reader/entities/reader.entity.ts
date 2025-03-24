@@ -4,7 +4,7 @@ import { Rental } from '../../rental/entities/rental.entity';
 
 @Entity()
 export class Reader {
-  @ApiProperty({ description: 'Unique identifier for the reader' })
+  @ApiProperty({ description: "Reader's unique identifier" })
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -16,12 +16,12 @@ export class Reader {
   @Column()
   lastName: string;
 
-  @ApiProperty({ description: 'Unique email address of the reader' })
+  @ApiProperty({ description: "Reader's email address" })
   @Column({ unique: true })
   email: string;
 
   @ApiProperty({
-    description: 'List of rentals associated with this reader',
+    description: 'List of rentals',
     type: () => [Rental],
   })
   @OneToMany(() => Rental, (rental) => rental.reader)

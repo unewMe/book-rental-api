@@ -4,7 +4,7 @@ import { Book } from '../../book/entities/book.entity';
 
 @Entity()
 export class Author {
-  @ApiProperty({ description: 'Unique identifier for the author' })
+  @ApiProperty({ description: "Author's unique identifier" })
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -17,14 +17,14 @@ export class Author {
   lastName: string;
 
   @ApiProperty({
-    description: 'Short biography of the author',
+    description: "Author's short biography",
     required: false,
   })
   @Column({ nullable: true, type: 'text' })
   bio?: string;
 
   @ApiProperty({
-    description: 'List of books written by the author',
+    description: 'List of books written',
     type: () => [Book],
   })
   @ManyToMany(() => Book, (book) => book.authors)
