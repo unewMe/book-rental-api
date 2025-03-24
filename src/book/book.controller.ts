@@ -6,6 +6,7 @@ import {
   Delete,
   Param,
   Body,
+  Header,
 } from '@nestjs/common';
 import { ApiTags, ApiOkResponse, ApiCreatedResponse } from '@nestjs/swagger';
 import { BookService } from './book.service';
@@ -26,6 +27,7 @@ export class BookController {
 
   @Get()
   @ApiOkResponse({ type: [Book] })
+  @Header('Cache-Control', 'public, max-age=600')
   findAll() {
     return this.bookService.findAll();
   }

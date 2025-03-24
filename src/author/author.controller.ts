@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Header,
 } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { AuthorService } from './author.service';
@@ -13,7 +14,7 @@ import { CreateAuthorDto } from './dto/create-author.dto';
 import { UpdateAuthorDto } from './dto/update-author.dto';
 import { Author } from './entities/author.entity';
 
-@ApiTags('author') // Optional, adds a tag in Swagger UI
+@ApiTags('author')
 @Controller('author')
 export class AuthorController {
   constructor(private readonly authorService: AuthorService) {}
@@ -25,7 +26,8 @@ export class AuthorController {
   }
 
   @Get()
-  @ApiOkResponse({ type: [Author] }) // Tells Swagger this returns an array of Author
+  @ApiOkResponse({ type: [Author] })
+  @Header('Cache-Control', 'public, max-age=600')
   findAll(): Promise<Author[]> {
     return this.authorService.findAll();
   }
