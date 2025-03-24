@@ -8,6 +8,7 @@ import { Repository } from 'typeorm';
 import { Rental } from './entities/rental.entity';
 import { Book } from '../book/entities/book.entity';
 import { Reader } from '../reader/entities/reader.entity';
+import { UpdateRentalDto } from './dto/update-rental.dto';
 
 @Injectable()
 export class RentalService {
@@ -97,4 +98,17 @@ export class RentalService {
   async getAllRentals(): Promise<Rental[]> {
     return await this.rentalRepository.find({ relations: ['book', 'reader'] });
   }
+
+  async update(rentalId: string, rentalDto: UpdateRentalDto ) : Promise<Rental> {
+    const rental = await this.rentalRepository.findOne({ where: { id: rentalId } });
+    if (!rental) {
+      throw new NotFoundException(`Rental with id ${rentalId} not found`);
+    }
+    const updatedRental = await this.rentalRepository.save({
+      ...rental,
+      ...rentalDto,
+    });
+    return updatedRental;
+  }
+
 }
